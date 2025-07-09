@@ -43,7 +43,9 @@ export default function Dashboard() {
 
   return (
     <main className="p-10 text-white bg-[#0e0e0e] min-h-screen">
-      <h1 className="mb-6 text-3xl font-bold">Welcome, {user.email}</h1>
+      <h1 className="mb-6 text-3xl font-bold">
+        Welcome, {user.name} ({user.email})
+      </h1>
 
       <p className="mb-4">This is your dashboard 🎉</p>
 
@@ -51,7 +53,7 @@ export default function Dashboard() {
         onClick={signOut}
         className="rounded bg-gray-800 px-4 py-2 font-medium text-white hover:bg-gray-900"
       >
-        Sign out
+        Sign out
       </button>
     </main>
   );

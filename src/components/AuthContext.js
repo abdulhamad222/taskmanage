@@ -1,32 +1,41 @@
-// components/AuthContext.js
 'use client';
 
-import { createContext, useContext, useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const router = useRouter();
+  const [isReady, setIsReady] = useState(false); // ✅ Added this
 
-  const signIn = (email, password) => {
-    // *** Replace with real API call ***
-    if (password === 'demo') {
-      setUser({ email });
-      router.push('/dashboard');
-    } else {
-      alert('Wrong password (hint: “demo”)');
+  useEffect(() => {
+    try {
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) {
+        const parsedUser = JSON.parse(savedUser);
+        if (parsedUser && typeof parsedUser === 'object') {
+          setUser(parsedUser);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to parse user from localStorage:', err);
+      localStorage.removeItem('user');
     }
+    setIsReady(true); // ✅ Now works
+  }, []);
+
+  const signIn = (userData) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const signOut = () => {
     setUser(null);
-    router.push('/');
+    localStorage.removeItem('user');
   };
 
   return (
-    <AuthContext.Provider value={{ user, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, signIn, signOut, isReady }}>
       {children}
     </AuthContext.Provider>
   );
