@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Eye, EyeOff } from 'lucide-react'; // Eye icons
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function Home() {
   const router = useRouter();
