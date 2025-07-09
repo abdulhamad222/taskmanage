@@ -11,28 +11,27 @@ export default function Dashboard() {
   const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => {
-      setCheckingAuth(false);
-    }, 500);
+    const timer = setTimeout(() => setCheckingAuth(false), 500);
+    return () => clearTimeout(timer);
   }, []);
 
   if (checkingAuth) {
     return (
-      <main className="flex gap-2 h-screen items-center justify-center">
+      <main className="flex flex-col gap-2 h-screen items-center justify-center bg-[#0e0e0e] text-white px-4">
         <Spinner />
-        <p className="text-white text-sm">Checking authentication…</p>
+        <p className="text-sm">Checking authentication…</p>
       </main>
     );
   }
 
   if (!user) {
     return (
-      <main className="flex h-screen items-center justify-center bg-[#0e0e0e] text-white">
-        <div className="text-center space-y-4 p-8 rounded-xl shadow-md">
+      <main className="flex h-screen items-center justify-center bg-[#0e0e0e] text-white px-4">
+        <div className="text-center space-y-4 p-8 rounded-xl bg-[#1e1e1e] shadow-md w-full max-w-sm">
           <h2 className="text-xl font-semibold">Please sign in first</h2>
           <button
             onClick={() => router.push('/')}
-            className="rounded bg-[#704ac2] px-4 py-2 font-medium text-white hover:bg-[#5a3ca0]"
+            className="w-full rounded bg-[#704ac2] px-4 py-2 font-medium text-white hover:bg-[#5a3ca0]"
           >
             Go to Sign In
           </button>
@@ -42,19 +41,20 @@ export default function Dashboard() {
   }
 
   return (
-    <main className="p-10 text-white bg-[#0e0e0e] min-h-screen">
-      <h1 className="mb-6 text-3xl font-bold">
-        Welcome, {user.name} ({user.email})
-      </h1>
+    <main className="min-h-screen bg-[#0e0e0e] text-white flex items-center justify-center px-4">
+      <div className="text-center w-full max-w-2xl space-y-6 p-6 bg-[#1c1c1c] rounded-xl shadow">
+        <h1 className="text-2xl sm:text-3xl font-bold">
+          Welcome, {user.name} ({user.email})
+        </h1>
+        <p className="text-sm sm:text-base">This is your Task Manager Dashboard 🎉</p>
 
-      <p className="mb-4">This is your dashboard 🎉</p>
-
-      <button
-        onClick={signOut}
-        className="rounded bg-gray-800 px-4 py-2 font-medium text-white hover:bg-gray-900"
-      >
-        Sign out
-      </button>
+        <button
+          onClick={signOut}
+          className="mt-4 rounded bg-[#704ac2] px-4 py-2 font-medium text-white hover:bg-[#5a3ca0]"
+        >
+          Sign out
+        </button>
+      </div>
     </main>
   );
 }

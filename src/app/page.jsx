@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
+import Link from 'next/link';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -56,10 +57,10 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="flex items-center justify-center h-screen bg-[#0e0e0e] text-white">
+    <main className="flex items-center justify-center min-h-screen px-4 bg-[#0e0e0e] text-white">
       <form
         onSubmit={handleRegister}
-        className="w-full max-w-sm space-y-6 rounded-xl bg-[#282828] p-8 shadow"
+        className="w-full max-w-md md:max-w-sm space-y-6 rounded-xl bg-[#282828] p-6 sm:p-8 shadow-lg"
       >
         <h1 className="text-2xl font-bold text-center">Register</h1>
 
@@ -137,6 +138,15 @@ export default function RegisterPage() {
         >
           {loading ? 'Registering...' : 'Register'}
         </button>
+
+        <div className="text-center pt-4 text-sm">
+          <Link
+            href="/login"
+            className="text-gray-300 hover:underline hover:text-white"
+          >
+            Already have an account? Login
+          </Link>
+        </div>
       </form>
     </main>
   );
