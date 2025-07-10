@@ -2,16 +2,20 @@
 
 import Spinner from '@/components/spinner';
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/components/AuthContext';
 
 export default function MyTasksPage() {
+  const { user, isReady } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newTask, setNewTask] = useState('');
   const [status, setStatus] = useState('Pending');
 
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    if (isReady) {
+      fetchTasks();
+    }
+  }, [isReady]);
 
   const fetchTasks = async () => {
     try {
@@ -27,13 +31,17 @@ export default function MyTasksPage() {
 
   const handleAddTask = async (e) => {
     e.preventDefault();
-    if (!newTask.trim()) return;
+    if (!newTask.trim() || !user) return;
 
     try {
       const res = await fetch('/api/my-tasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: newTask, status }),
+        body: JSON.stringify({
+          title: newTask,
+          status,
+          userId: user.email, // ✅ Include userId for task + notification
+        }),
       });
 
       const data = await res.json();

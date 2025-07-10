@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   ClipboardList,
@@ -12,13 +12,13 @@ import {
   Bell,
   BarChart2,
   StickyNote,
-  Archive,
   Settings,
   LogOut,
   Menu,
   X,
 } from 'lucide-react';
 import { useState } from 'react';
+import { useAuth } from '@/components/AuthContext';
 
 const links = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -33,9 +33,16 @@ const links = [
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
 
-export default function Sidebar({ onLogout }) {
+export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const { signOut } = useAuth();
+
+  const handleLogout = () => {
+    signOut(); // Clear user context & localStorage
+    router.push('/'); // Redirect to homepage or login
+  };
 
   return (
     <>
@@ -74,7 +81,7 @@ export default function Sidebar({ onLogout }) {
         </nav>
 
         <button
-          onClick={onLogout}
+          onClick={handleLogout}
           className="flex items-center gap-2 text-sm text-red-400 px-3 py-2 mt-4 hover:bg-[#2a2a2a] rounded-lg"
         >
           <LogOut size={18} />

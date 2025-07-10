@@ -43,19 +43,6 @@ export default function LoginPage() {
     }
   };
 
-  // Password strength checker
-  const getPasswordStrength = () => {
-    if (password.length < 6) return 'Weak';
-    if (password.match(/[A-Z]/) && password.match(/[0-9]/) && password.length >= 8) return 'Strong';
-    return 'Medium';
-  };
-
-  const getStrengthColor = () => {
-    const strength = getPasswordStrength();
-    if (strength === 'Weak') return 'text-red-500';
-    if (strength === 'Medium') return 'text-yellow-500';
-    return 'text-green-500';
-  };
 
   return (
     <main className="flex items-center justify-center h-screen bg-[#0e0e0e] text-white">
@@ -95,9 +82,6 @@ export default function LoginPage() {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-          <span className={`text-xs mt-1 ${getStrengthColor()}`}>
-            Password is: {getPasswordStrength()}
-          </span>
         </label>
 
         <button

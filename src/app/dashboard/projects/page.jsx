@@ -2,15 +2,19 @@
 
 import { useEffect, useState } from 'react';
 import Spinner from '@/components/spinner';
+import { useAuth } from '@/components/AuthContext';
 
 export default function ProjectsPage() {
+  const { user, isReady } = useAuth();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newProject, setNewProject] = useState('');
 
   useEffect(() => {
-    fetchProjects();
-  }, []);
+    if (isReady) {
+      fetchProjects();
+    }
+  }, [isReady]);
 
   const fetchProjects = async () => {
     try {
@@ -26,13 +30,17 @@ export default function ProjectsPage() {
 
   const handleAddProject = async (e) => {
     e.preventDefault();
-    if (!newProject.trim()) return;
+    if (!newProject.trim() || !user) return;
 
     try {
       const res = await fetch('/api/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newProject }),
+        body: JSON.stringify({
+          title: newProject,
+          description: '',
+          userId: user.email, // ✅ Send userId for notification
+        }),
       });
 
       const data = await res.json();
@@ -82,8 +90,10 @@ export default function ProjectsPage() {
               key={project._id}
               className="rounded-xl bg-[#282828] p-4 shadow-md hover:shadow-lg transition"
             >
-              <h2 className="text-lg font-semibold mb-2">{project.name}</h2>
-              <p className="text-sm text-gray-400">Created: {new Date(project.createdAt).toLocaleDateString()}</p>
+              <h2 className="text-lg font-semibold mb-2">{project.title}</h2>
+              <p className="text-sm text-gray-400">
+                Created: {new Date(project.createdAt).toLocaleDateString()}
+              </p>
             </div>
           ))}
         </div>

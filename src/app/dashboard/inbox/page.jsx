@@ -12,7 +12,6 @@ export default function InboxPage() {
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // Fetch all users (except current)
   useEffect(() => {
     async function fetchUsers() {
       const res = await fetch('/api/users');
@@ -23,24 +22,29 @@ export default function InboxPage() {
     if (user) fetchUsers();
   }, [user]);
 
-  // Fetch messages with selected user
   useEffect(() => {
     async function fetchMessages() {
-      if (!selectedUser) return;
-      const res = await fetch(`/api/messages?with=${selectedUser._id}`);
+      if (!selectedUser || !user) return;
+      const res = await fetch(`/api/messages?with=${selectedUser._id}`, {
+        headers: {
+          userid: user.email, // ✅ send current user's ID
+        },
+      });
       const data = await res.json();
       setMessages(data.messages);
     }
     fetchMessages();
-  }, [selectedUser]);
+  }, [selectedUser, user]);
 
-  // Send message
   const handleSend = async () => {
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || !user || !selectedUser) return;
 
     const res = await fetch('/api/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        userid: user.email, // ✅ include sender ID
+      },
       body: JSON.stringify({
         to: selectedUser._id,
         message: newMessage,
@@ -58,7 +62,6 @@ export default function InboxPage() {
 
   return (
     <div className="flex flex-col sm:flex-row h-screen bg-[#0e0e0e] text-white">
-      {/* User List */}
       <aside className="sm:w-1/3 md:w-1/4 bg-[#1e1e1e] p-4 border-r border-gray-800">
         <h2 className="text-lg font-semibold mb-4">Users</h2>
         <ul className="space-y-2 overflow-y-auto h-[80vh]">
@@ -77,7 +80,6 @@ export default function InboxPage() {
         </ul>
       </aside>
 
-      {/* Chat Area */}
       <main className="flex-1 p-4 flex flex-col justify-between">
         {selectedUser ? (
           <>
@@ -89,7 +91,7 @@ export default function InboxPage() {
                 <div
                   key={msg._id}
                   className={`p-2 rounded max-w-xs ${
-                    msg.sender === user._id ? 'bg-[#704ac2] self-end' : 'bg-[#333]'
+                    msg.sender === user.email ? 'bg-[#704ac2] self-end' : 'bg-[#333]'
                   }`}
                 >
                   {msg.text}

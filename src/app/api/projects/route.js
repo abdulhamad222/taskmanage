@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
+import Notification from '../../../../models/Notification';
 
-// Connect to MongoDB
 const MONGODB_URI = process.env.MONGODB_URI;
+
+// MongoDB connection
 if (!mongoose.connection.readyState) {
   mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
@@ -10,10 +12,10 @@ if (!mongoose.connection.readyState) {
   });
 }
 
-// Define Project schema
+// Project schema and model
 const ProjectSchema = new mongoose.Schema(
   {
-    title: String,
+    title: { type: String, required: true },
     description: String,
   },
   { timestamps: true }
@@ -28,17 +30,39 @@ export async function GET() {
     const projects = await Project.find().sort({ createdAt: -1 });
     return NextResponse.json({ success: true, projects });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
   }
 }
 
-// POST: Add a new project
+// POST: Add new project and create notification
 export async function POST(req) {
   try {
-    const { title, description } = await req.json();
+    const { title, description, userId } = await req.json();
+
+    if (!title || !userId) {
+      return NextResponse.json(
+        { success: false, error: 'Title and userId are required' },
+        { status: 400 }
+      );
+    }
+
     const newProject = await Project.create({ title, description });
+
+    // ✅ Create notification for the user who created the project
+    await Notification.create({
+      userId,
+      type: 'project',
+      message: `New project "${title}" created.`,
+    });
+
     return NextResponse.json({ success: true, project: newProject });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
   }
 }
