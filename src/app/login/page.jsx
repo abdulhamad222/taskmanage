@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
-import { useAuth } from '@/components/AuthContext';
+import { useAuth } from '@/app/user/components/AuthContext';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
@@ -31,7 +31,7 @@ export default function LoginPage() {
       if (data.success) {
         signIn(data.user);
         toast.success(`Welcome back, ${data.user.name || 'user'}!`);
-        router.push('/dashboard');
+        router.push('/user/dashboard');
       } else {
         toast.error(data.error || 'Login failed');
       }

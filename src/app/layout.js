@@ -1,7 +1,7 @@
 import './globals.css';
 import { Inter } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from '@/components/AuthContext';
+import { AuthProvider } from '@/app/user/components/AuthContext';
 
 const inter = Inter({ subsets: ['latin'] });
 
